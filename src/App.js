@@ -1,73 +1,50 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 
-const commentsData = [
-  {
-    name: "sagar",
-    text: "hello ji",
-    replies: [
-      {
-        name: "aman",
-        text: "theek h ji",
-        replies: [
-          {
-            name: "pawan",
-            text: "or aman kya haal",
-            replies: [],
-          },
-        ],
-      },
-      {
-        name: "isha",
-        text: "bdiaaaaa hu sagar",
-        replies: [],
-      },
-    ],
-  },
-  {
-    name: "deepak",
-    text: "kya hal h bhaiyo ke",
-    replies: [
-      {
-        name: "sagar",
-        text: "bdia bhaia",
-        replies: [],
-      },
-    ],
-  },
-];
+import React from "react";
 
-const Comment = ({ data }) => {
-  const { text, name } = data;
+const ShowSomething = ({ words }) => {
+  const [displayWord, setDisplayWord] = useState([]);
+
+  useEffect(() => {
+    words.forEach((word, index) => {
+      const timer = setTimeout(() => {
+        setDisplayWord((prev) => [...prev, word]);
+        console.log(displayWord);
+      }, index * 2000);
+      return () => clearTimeout(timer);
+    });
+  }, []);
+
   return (
-    <div className="flex bg-gray-100 my-4">
-      <img
-        src="https://e7.pngegg.com/pngimages/178/595/png-clipart-user-profile-computer-icons-login-user-avatars-monochrome-black-thumbnail.png"
-        alt="user pic"
-        className="h-12 w-12"
-      />
-      <div className="px-3">
-        <p className="font-bold">{name}</p>
-        <p>{text}</p>
-      </div>
+    <div>
+      {displayWord.map((word, index) => (
+        <p key={index}> {word}</p>
+      ))}
     </div>
   );
 };
 
-const CommentList = ({ commentsData }) => {
-  return commentsData.map((comment, index) => (
-    <div key={index}>
-      <Comment data={comment} />
-      <div className="pl-5 border border-l-black ml-5">
-        <CommentList commentsData={comment.replies} />
-      </div>
-    </div>
-  ));
-};
-
 const App = () => {
+  const [typedText, setTypedText] = useState("");
+  const [showChildComponent, setShowChildComponent] = useState(false);
+  const handleSubmit = () => {
+    setShowChildComponent(true);
+  };
+
   return (
-    <div>
-      <CommentList commentsData={commentsData} />
+    <div className="flex border border-black justify-center items-center h-screen">
+      <div className="mb-10">
+        <input
+          className="b-2 border border-black"
+          type="text"
+          placeholder="enter something"
+          value={typedText}
+          onChange={(e) => setTypedText(e.target.value)}
+        />
+        <button onClick={handleSubmit}>Send</button>
+        {showChildComponent && <ShowSomething words={typedText.split(" ")} />}
+      </div>
     </div>
   );
 };
