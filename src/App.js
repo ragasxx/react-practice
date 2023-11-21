@@ -1,50 +1,60 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-
-import React from "react";
-
-const ShowSomething = ({ words }) => {
-  const [displayWord, setDisplayWord] = useState([]);
-
-  useEffect(() => {
-    words.forEach((word, index) => {
-      const timer = setTimeout(() => {
-        setDisplayWord((prev) => [...prev, word]);
-        console.log(displayWord);
-      }, index * 2000);
-      return () => clearTimeout(timer);
-    });
-  }, []);
-
-  return (
-    <div>
-      {displayWord.map((word, index) => (
-        <p key={index}> {word}</p>
-      ))}
-    </div>
-  );
-};
+import React, { useState } from "react";
 
 const App = () => {
-  const [typedText, setTypedText] = useState("");
-  const [showChildComponent, setShowChildComponent] = useState(false);
-  const handleSubmit = () => {
-    setShowChildComponent(true);
+  const countries = [
+    {
+      name: "india",
+      value: "IN",
+      cities: ["delhi", "gurgaon"],
+    },
+    {
+      name: "pakistan",
+      value: "PK",
+      cities: ["lahore", "karachi"],
+    },
+    {
+      name: "bangladesh",
+      value: "BG",
+      cities: ["dhaka", "finland"],
+    },
+  ];
+
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+
+  const handleCountryChange = (e) => {
+    setSelectedCountry(e.target.value);
+    setSelectedCity("");
+  };
+
+  const handleCityChange = (e) => {
+    setSelectedCity(e.target.value);
   };
 
   return (
-    <div className="flex border border-black justify-center items-center h-screen">
-      <div className="mb-10">
-        <input
-          className="b-2 border border-black"
-          type="text"
-          placeholder="enter something"
-          value={typedText}
-          onChange={(e) => setTypedText(e.target.value)}
-        />
-        <button onClick={handleSubmit}>Send</button>
-        {showChildComponent && <ShowSomething words={typedText.split(" ")} />}
-      </div>
+    <div>
+      <select value={selectedCountry} onChange={handleCountryChange}>
+        {countries.map((country, i) => {
+          return (
+            <option key={i} value={country.value}>
+              {country.name}
+            </option>
+          );
+        })}
+      </select>
+      {selectedCountry && (
+        <select value={selectedCity} onChange={handleCityChange}>
+          {countries
+            .find((country) => country.value === selectedCountry)
+            .cities.map((city, i) => {
+              return (
+                <option key={i} value={city}>
+                  {city}
+                </option>
+              );
+            })}
+        </select>
+      )}
     </div>
   );
 };
